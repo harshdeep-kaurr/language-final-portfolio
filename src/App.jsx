@@ -1262,7 +1262,39 @@ function FocusModal({ challenge, state, onClose }) {
   )
 }
 
+function PdfSection({ title, subtitle, fileName }) {
+  const pdfUrl = `${import.meta.env.BASE_URL}assets/${fileName}`
+
+  return (
+    <section className="rounded-[36px] border border-white/70 bg-white/90 p-6 shadow-xl">
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <div className="font-display text-4xl text-slate-900">{title}</div>
+          <p className="mt-2 max-w-2xl text-slate-600">{subtitle}</p>
+        </div>
+        <a
+          href={pdfUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-lg"
+        >
+          Open PDF
+        </a>
+      </div>
+
+      <div className="mt-6 overflow-hidden rounded-[28px] border border-slate-200 bg-slate-50">
+        <iframe
+          title={title}
+          src={pdfUrl}
+          className="h-[75vh] w-full"
+        />
+      </div>
+    </section>
+  )
+}
+
 export default function App() {
+  const [activeTab, setActiveTab] = useState('part3')
   const [challengeState, setChallengeState] = useState(() =>
     Object.fromEntries(
       challenges.map((challenge) => [
@@ -1395,147 +1427,197 @@ export default function App() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[620px] bg-[radial-gradient(circle_at_top_left,rgba(255,188,128,0.45),transparent_34%),radial-gradient(circle_at_top_right,rgba(129,230,217,0.35),transparent_30%)]" />
 
       <main className="relative mx-auto flex max-w-7xl flex-col gap-10 px-4 pb-16 pt-6 sm:px-6 lg:px-8">
-        <section className="pt-2">
-          <HeroMap />
-        </section>
-
-        <ProgressPanel
-          xp={xp}
-          completedCount={completedCount}
-          title={unlockedTitle}
-          percent={completionPercent}
-          badges={badges}
-        />
-
-        <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-[34px] border border-white/70 bg-white/88 p-6 shadow-xl">
-            <SectionTitle
-              eyebrow="How It Works"
-              title="Play it like a city scavenger hunt"
-              subtitle="Move through Lisbon or Porto, spot signs and spaces, then decode what they reveal about language, tourism, identity, and belonging."
-            />
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
-              <StepCard
-                icon={Compass}
-                number="1"
-                title="Pick a Challenge"
-                text="Choose a mission from the board and head into the city looking for a clue."
-                color="from-amber-200 to-rose-200"
-              />
-              <StepCard
-                icon={MapPin}
-                number="2"
-                title="Explore the City"
-                text="Wander through stations, cafes, viewpoints, menus, and storefronts with a researcher’s eye."
-                color="from-cyan-200 to-teal-200"
-              />
-              <StepCard
-                icon={Search}
-                number="3"
-                title="Decode the Meaning"
-                text="Answer playful critical-thinking prompts and notice who the space seems built for."
-                color="from-lime-200 to-yellow-200"
-              />
+        <section className="rounded-[34px] border border-white/70 bg-white/88 p-5 shadow-xl">
+          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+            <div>
+              <div className="font-display text-4xl text-slate-900 md:text-5xl">Language Portfolio</div>
+              <p className="mt-2 max-w-2xl text-slate-600">
+                Click through Part 1, Part 2, and Part 3. The PDFs live in the first two tabs, and the full Portugal linguistic landscape project lives in Part 3.
+              </p>
             </div>
-          </div>
-
-          <div className="rounded-[34px] border border-white/70 bg-[linear-gradient(135deg,rgba(255,241,230,0.95),rgba(240,251,252,0.93))] p-6 shadow-xl">
-            <SectionTitle
-              eyebrow="Passport Rewards"
-              title="Stamps, badges, and titles"
-              subtitle="Each completed mission levels up your passport and unlocks a more observant way of reading public space."
-            />
-            <div className="mt-6 grid gap-3">
+            <div className="flex flex-wrap gap-3">
               {[
-                'Sign Spotter',
-                'Local Space Finder',
-                'Tourist Trap Detective',
-                'Linguistic Landscape Explorer',
-                'Cultural Decoder',
-              ].map((label, index) => (
-                <motion.div
-                  key={label}
-                  whileHover={{ x: 5 }}
-                  className="flex items-center justify-between rounded-2xl bg-white/85 px-4 py-4 shadow-sm"
+                { id: 'part1', label: 'Part 1' },
+                { id: 'part2', label: 'Part 2' },
+                { id: 'part3', label: 'Part 3' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={classNames(
+                    'rounded-full px-5 py-3 text-sm font-semibold transition',
+                    activeTab === tab.id ? 'bg-slate-900 text-white shadow-lg' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  )}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white">
-                      {index + 1}
-                    </div>
-                    <span className="font-medium text-slate-700">{label}</span>
-                  </div>
-                  <ArrowRight size={18} className="text-slate-400" />
-                </motion.div>
+                  {tab.label}
+                </button>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="concepts" className="rounded-[36px] border border-white/70 bg-[linear-gradient(135deg,rgba(255,246,238,0.95),rgba(239,251,252,0.95))] p-6 shadow-xl">
-          <SectionTitle
-            eyebrow="Concept Deck"
-            title="Think Like a Linguistic Landscape Researcher"
-            subtitle="These ideas stay short, practical, and fieldwork-friendly. Flip the cards for a quick Portugal example."
+        {activeTab === 'part1' && (
+          <PdfSection
+            title="Part 1"
+            subtitle="Portfolio Part 1 embedded directly into the site so it can be viewed without leaving the portfolio."
+            fileName="portfolio-part-1.pdf"
           />
-          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {concepts.map((concept) => (
-              <ConceptCard key={concept.title} concept={concept} />
-            ))}
-          </div>
-        </section>
+        )}
 
-        <section id="challenge-board" className="rounded-[36px] border border-white/70 bg-white/88 p-6 shadow-xl">
-          <SectionTitle
-            eyebrow="Main Feature"
-            title="Challenge Board"
-            subtitle="Twelve playful missions mix observation, multiple choice, and reflection so the site teaches through interaction instead of long academic blocks."
+        {activeTab === 'part2' && (
+          <PdfSection
+            title="Part 2"
+            subtitle="Reflection modules PDF embedded as the second portfolio section."
+            fileName="reflection-modules.pdf"
           />
+        )}
 
-          <div className="mt-8 grid gap-5 xl:grid-cols-2">
-            {challenges.map((challenge) => (
-              <ChallengeCard
-                key={challenge.id}
-                challenge={challenge}
-                state={challengeState[challenge.id]}
-                onToggleComplete={handleToggleComplete}
-                onAnswer={handleAnswer}
-                onOpen={setFocusChallenge}
+        {activeTab === 'part3' && (
+          <>
+            <section className="pt-2">
+              <HeroMap />
+            </section>
+
+            <ProgressPanel
+              xp={xp}
+              completedCount={completedCount}
+              title={unlockedTitle}
+              percent={completionPercent}
+              badges={badges}
+            />
+
+            <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+              <div className="rounded-[34px] border border-white/70 bg-white/88 p-6 shadow-xl">
+                <SectionTitle
+                  eyebrow="How It Works"
+                  title="Play it like a city scavenger hunt"
+                  subtitle="Move through Lisbon or Porto, spot signs and spaces, then decode what they reveal about language, tourism, identity, and belonging."
+                />
+                <div className="mt-6 grid gap-4 md:grid-cols-3">
+                  <StepCard
+                    icon={Compass}
+                    number="1"
+                    title="Pick a Challenge"
+                    text="Choose a mission from the board and head into the city looking for a clue."
+                    color="from-amber-200 to-rose-200"
+                  />
+                  <StepCard
+                    icon={MapPin}
+                    number="2"
+                    title="Explore the City"
+                    text="Wander through stations, cafes, viewpoints, menus, and storefronts with a researcher’s eye."
+                    color="from-cyan-200 to-teal-200"
+                  />
+                  <StepCard
+                    icon={Search}
+                    number="3"
+                    title="Decode the Meaning"
+                    text="Answer playful critical-thinking prompts and notice who the space seems built for."
+                    color="from-lime-200 to-yellow-200"
+                  />
+                </div>
+              </div>
+
+              <div className="rounded-[34px] border border-white/70 bg-[linear-gradient(135deg,rgba(255,241,230,0.95),rgba(240,251,252,0.93))] p-6 shadow-xl">
+                <SectionTitle
+                  eyebrow="Passport Rewards"
+                  title="Stamps, badges, and titles"
+                  subtitle="Each completed mission levels up your passport and unlocks a more observant way of reading public space."
+                />
+                <div className="mt-6 grid gap-3">
+                  {[
+                    'Sign Spotter',
+                    'Local Space Finder',
+                    'Tourist Trap Detective',
+                    'Linguistic Landscape Explorer',
+                    'Cultural Decoder',
+                  ].map((label, index) => (
+                    <motion.div
+                      key={label}
+                      whileHover={{ x: 5 }}
+                      className="flex items-center justify-between rounded-2xl bg-white/85 px-4 py-4 shadow-sm"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white">
+                          {index + 1}
+                        </div>
+                        <span className="font-medium text-slate-700">{label}</span>
+                      </div>
+                      <ArrowRight size={18} className="text-slate-400" />
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section id="concepts" className="rounded-[36px] border border-white/70 bg-[linear-gradient(135deg,rgba(255,246,238,0.95),rgba(239,251,252,0.95))] p-6 shadow-xl">
+              <SectionTitle
+                eyebrow="Concept Deck"
+                title="Think Like a Linguistic Landscape Researcher"
+                subtitle="These ideas stay short, practical, and fieldwork-friendly. Flip the cards for a quick Portugal example."
               />
-            ))}
-          </div>
-        </section>
+              <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+                {concepts.map((concept) => (
+                  <ConceptCard key={concept.title} concept={concept} />
+                ))}
+              </div>
+            </section>
 
-        <FieldNotes
-          draft={notesDraft}
-          setDraft={setNotesDraft}
-          notes={notes}
-          onSave={handleSaveNote}
-          onExport={handleExportNotes}
-        />
+            <section id="challenge-board" className="rounded-[36px] border border-white/70 bg-white/88 p-6 shadow-xl">
+              <SectionTitle
+                eyebrow="Main Feature"
+                title="Challenge Board"
+                subtitle="Twelve playful missions mix observation, multiple choice, and reflection so the site teaches through interaction instead of long academic blocks."
+              />
 
-        <PortoLisbonComparison focus={cityFocus} setFocus={setCityFocus} />
+              <div className="mt-8 grid gap-5 xl:grid-cols-2">
+                {challenges.map((challenge) => (
+                  <ChallengeCard
+                    key={challenge.id}
+                    challenge={challenge}
+                    state={challengeState[challenge.id]}
+                    onToggleComplete={handleToggleComplete}
+                    onAnswer={handleAnswer}
+                    onOpen={setFocusChallenge}
+                  />
+                ))}
+              </div>
+            </section>
 
-        <ReflectionJournal
-          entries={journalEntries}
-          draft={journalDraft}
-          setDraft={setJournalDraft}
-          onSavePrompt={handleSaveJournalPrompt}
-        />
+            <FieldNotes
+              draft={notesDraft}
+              setDraft={setNotesDraft}
+              notes={notes}
+              onSave={handleSaveNote}
+              onExport={handleExportNotes}
+            />
 
-        <section className="relative overflow-hidden rounded-[40px] border border-white/70 bg-slate-900 px-6 py-16 text-center text-white shadow-[0_28px_80px_rgba(15,23,42,0.28)]">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,211,122,0.18),transparent_34%),radial-gradient(circle_at_bottom_left,rgba(91,223,217,0.18),transparent_30%)]" />
-          <div className="relative mx-auto max-w-4xl">
-            <div className="font-display text-4xl leading-tight md:text-6xl">
-              Go outside. Look closer.
-            </div>
-            <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-white/82 md:text-2xl">
-              Every sign tells a story about identity, belonging, tourism, power, and culture.
-            </p>
-            <p className="mx-auto mt-6 max-w-3xl font-display text-2xl text-amber-300 md:text-4xl">
-              Portugal isn’t just something you visit. It’s something you learn to read.
-            </p>
-          </div>
-        </section>
+            <PortoLisbonComparison focus={cityFocus} setFocus={setCityFocus} />
+
+            <ReflectionJournal
+              entries={journalEntries}
+              draft={journalDraft}
+              setDraft={setJournalDraft}
+              onSavePrompt={handleSaveJournalPrompt}
+            />
+
+            <section className="relative overflow-hidden rounded-[40px] border border-white/70 bg-slate-900 px-6 py-16 text-center text-white shadow-[0_28px_80px_rgba(15,23,42,0.28)]">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,211,122,0.18),transparent_34%),radial-gradient(circle_at_bottom_left,rgba(91,223,217,0.18),transparent_30%)]" />
+              <div className="relative mx-auto max-w-4xl">
+                <div className="font-display text-4xl leading-tight md:text-6xl">
+                  Go outside. Look closer.
+                </div>
+                <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-white/82 md:text-2xl">
+                  Every sign tells a story about identity, belonging, tourism, power, and culture.
+                </p>
+                <p className="mx-auto mt-6 max-w-3xl font-display text-2xl text-amber-300 md:text-4xl">
+                  Portugal isn’t just something you visit. It’s something you learn to read.
+                </p>
+              </div>
+            </section>
+          </>
+        )}
       </main>
 
       <AnimatePresence>
