@@ -1,5 +1,6 @@
 node_modules/
-dist/
+dist/.git/
+dist/.git-backup/
 .DS_Store
 *.log
 .vite/
